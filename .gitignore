@@ -1,0 +1,12 @@
+cat << 'EOF' > .gitignore
+# Binaries
+raft-sdn
+*.exe
+*.test
+
+# Raft BoltDB runtime storage
+raft_data/
+
+# OS/Editor artifacts
+.vscode/
+*.swp

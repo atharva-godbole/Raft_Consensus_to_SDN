@@ -1,0 +1,97 @@
+===============================================================================
+RAFT-BASED FAULT-TOLERANT SDN CONTROLLER: OPERATIONAL MANUAL
+===============================================================================
+
+-------------------------------------------------------------------------------
+1. PREREQUISITES & COMPILATION
+-------------------------------------------------------------------------------
+Ensure dependencies are satisfied and the controller binary is built:
+
+    cd ~/raft-sdn/single-raft
+    go mod tidy
+    go build -o single-raft-sdn .
+    chmod +x setup_cluster.sh
+
+-------------------------------------------------------------------------------
+2. STEP-BY-STEP EXECUTION WORKFLOW
+-------------------------------------------------------------------------------
+
+[STEP A] Launch the Mininet Datapath (Terminal 1)
+-------------------------------------------------
+Start the Mininet virtual network with an OpenFlow 1.3 switch and no controller:
+
+    sudo mn --topo single,2 --mac --switch ovsk,protocols=OpenFlow13 --controller none
+
+Leave this terminal open at the "mininet>" prompt.
+
+
+[STEP B] Bootstrap Cluster & Install Flows (Terminal 2)
+--------------------------------------------------------
+In a second terminal, execute the master automation script:
+
+    cd ~/raft-sdn/single-raft
+    ./setup_cluster.sh
+
+This script automatically:
+  1. Kills any stale controller processes.
+  2. Wipes old BoltDB data directories (data/node*).
+  3. Configures OVS bridge "s1" to listen passively on TCP port 6633.
+  4. Launches Node 1 (Bootstrap Leader), Node 2, and Node 3 in the background.
+  5. Sends Raft /join requests to establish quorum.
+  6. Injects flow rules (ARP broadcast + bidirectional IPv4 routing).
+
+
+[STEP C] Verify Cluster Health & OVS Rules (Terminal 2)
+-------------------------------------------------------
+Inspect Node 1's cluster status:
+    curl -s http://127.0.0.1:8001/status
+
+Inspect the flow table on switch s1:
+    sudo ovs-ofctl -O OpenFlow13 dump-flows s1
+
+
+[STEP D] Validate End-to-End Connectivity (Terminal 1)
+-------------------------------------------------------
+Inside the Mininet CLI, test ping communication between host 1 and host 2:
+
+    mininet> h1 ping -c 3 h2
+
+Result should be: "0% packet loss".
+
+-------------------------------------------------------------------------------
+3. TESTING LEADER FAILOVER & FAULT TOLERANCE
+-------------------------------------------------------------------------------
+
+1. In Terminal 1, initiate a continuous ping:
+    mininet> h1 ping h2
+
+2. In Terminal 2, kill the active leader (Node 1):
+    lsof -i :8001 -t | xargs kill -9
+
+3. Observe the failover in action:
+    - Mininet pings continue with zero packet loss.
+    - Check Node 2 or Node 3 to see who won the election:
+        curl -s http://127.0.0.1:8002/status
+        curl -s http://127.0.0.1:8003/status
+    - Inspect the log of the new leader (e.g., node2.log):
+        tail -n 20 node2.log
+
+4. Verify write quorum remains active by injecting a new flow via the new leader:
+    curl -X POST http://127.0.0.1:8002/flow \
+      -H "Content-Type: application/json" \
+      -d '{"op":"ADD", "match":"ip,nw_dst=10.0.0.3", "action":"drop", "priority":100}'
+
+-------------------------------------------------------------------------------
+4. CLEAN TEARDOWN & SHUTDOWN
+-------------------------------------------------------------------------------
+
+1. Exit Mininet (Terminal 1):
+    mininet> exit
+
+2. Stop all background controller processes (Terminal 2):
+    killall -9 single-raft-sdn
+
+3. Clean lingering virtual network interfaces or kernel artifacts:
+    sudo mn -c
+===============================================================================
+EOF

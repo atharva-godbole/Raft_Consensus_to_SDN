@@ -15,6 +15,7 @@ SYSTEM SPECIFICATIONS & ENVIRONMENT SETUP GUIDE
 2. SOFTWARE STACK
 -----------------
 - Go Runtime:        Go 1.20+ / 1.21+
+- Python Version:    Python3.12
 - OpenFlow Switch:   Open vSwitch (OVS) v2.17+
 - Network Emulator:  Mininet 2.3+
 - Supported Protocol:OpenFlow 1.3 (-O OpenFlow13)
@@ -60,6 +61,23 @@ sudo apt-get install -y golang-go
 # Verify Go installation
 go version
 
+#Install Python and Mininet Library
+    # 1. Install repository management dependencies
+    sudo apt update
+    sudo apt install -y software-properties-common
+    
+    # 2. Add the Deadsnakes PPA and refresh repository lists
+    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    sudo apt update
+    
+    # 3. Install Python 3.12, virtual environment support, and header files
+    sudo apt install -y python3.12 python3.12-venv python3.12-dev
+
+    # 4. Check with python3 --version 
+
+    # 5. In the root folder of this repository: python3 -m venv .venv,
+    then: ./.venv/bin/activate
+    then: pip install mininet
 
 ---- checks ----
 

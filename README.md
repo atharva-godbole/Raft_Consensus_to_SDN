@@ -1,4 +1,4 @@
-# Single-Raft SDN Simulator
+# Single Raft-SDN Simulator
 
 A fault-tolerant distributed Key-Value store (Country:Capital) integrated with an Open vSwitch (OVS) Software-Defined Networking (SDN) datapath using HashiCorp Raft.
 

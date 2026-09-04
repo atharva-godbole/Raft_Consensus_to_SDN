@@ -3,7 +3,7 @@ single-raft-sdn
 raft-sdn
 *.exe
 
-# Raft disk storage & BoltDB databases
+# Raft disk storage, logs & BoltDB databases
 data/
 *.db
 
@@ -13,3 +13,6 @@ data/
 # OS & editor artifacts
 .DS_Store
 *.swp
+
+# python venv
+.venv/

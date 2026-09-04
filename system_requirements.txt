@@ -1,0 +1,73 @@
+cat << 'EOF' > ~/raft-sdn/SYSTEM_REQUIREMENTS.txt
+===============================================================================
+SYSTEM SPECIFICATIONS & ENVIRONMENT SETUP GUIDE
+===============================================================================
+
+1. VIRTUALBOX HARDWARE PROFILE
+------------------------------
+- Target OS:         Ubuntu Server 22.04 LTS (x86_64)
+- CPU Allocation:    2 vCPUs (Strictly required for 250ms Raft heartbeats)
+- Memory (RAM):      4096 MB (4 GB recommended; 2 GB minimum)
+- Storage:           25 GB VDI (Dynamically allocated)
+- Network Adapter 1: NAT (Internet access for updates/git)
+- Network Adapter 2: Bridged Adapter / Host-Only (Promiscuous: Allow All)
+
+2. SOFTWARE STACK
+-----------------
+- Go Runtime:        Go 1.20+ / 1.21+
+- OpenFlow Switch:   Open vSwitch (OVS) v2.17+
+- Network Emulator:  Mininet 2.3+
+- Supported Protocol:OpenFlow 1.3 (-O OpenFlow13)
+- Storage Engine:    BoltDB (github.com/boltdb/bolt)
+- Consensus Library: HashiCorp Raft (github.com/hashicorp/raft)
+
+3. QUICK SETUP ON CLEAN INSTANCE
+--------------------------------
+sudo apt-get update
+sudo apt-get install -y build-essential curl git lsof net-tools psmisc openvswitch-switch mininet golang-go
+sudo systemctl enable --now openvswitch-switch
+
+
+====================================================================================================================
+
+# 1. Update system repositories
+sudo apt-get update && sudo apt-get upgrade -y
+
+# 2. Install essential build and networking diagnostic utilities
+sudo apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    lsof \
+    net-tools \
+    iproute2 \
+    iputils-ping \
+    psmisc \
+    tcpdump
+
+# 3. Install Open vSwitch and Mininet
+sudo apt-get install -y \
+    openvswitch-switch \
+    openvswitch-common \
+    mininet
+
+# 4. Start and enable Open vSwitch daemon
+sudo systemctl enable --now openvswitch-switch
+
+# 5. Install Golang (1.21+ recommended)
+sudo apt-get install -y golang-go
+
+# Verify Go installation
+go version
+
+
+---- checks ----
+
+# Check OVS kernel module loaded
+lsmod | grep openvswitch
+
+# Verify OpenFlow utility version (must support OpenFlow 1.3)
+sudo ovs-ofctl --version
+
+# Verify Mininet installation
+sudo mn --test pingall

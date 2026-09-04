@@ -170,7 +170,7 @@ def run():
     n1.cmd('curl -s -X POST http://10.0.0.1:8000/data -H "Content-Type: application/json" -d \'{"country":"France","capital":"Paris"}\'')
     n1.cmd('curl -s -X POST http://10.0.0.1:8000/data -H "Content-Type: application/json" -d \'{"country":"Japan","capital":"Tokyo"}\'')
 
-    print("\nCustom commands available: write, read, status, kill, revive\n")
+    print("\nCustom commands available:\nData Commands (<command> <key> (<value_to_write>)): write, read\nNode Commands (<command> <node>): status, kill, revive ; (Nodes can be n1, n2, n3)\n")
     ClusterCLI(net)
 
     os.system("pkill -9 -f single-raft-sdn 2>/dev/null || true")

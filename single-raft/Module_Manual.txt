@@ -22,8 +22,8 @@ Directory Structure:
     ├── cluster.go          # Raft engine & BoltDB persistence setup
     ├── fsm.go              # Replicated KV Finite State Machine (Country:Capital)
     ├── main.go             # HTTP API + SDN switch flow updater
-    ├── topo.py             # Mininet orchestration + Custom interactive CLI
-    └── data/               # Auto-generated runtime data (logs, BoltDB, PIDs)
+    ├── raft_runner.py      # Mininet orchestration + Custom interactive CLI
+    └── data/               # Auto-generated runtime data (logs, BoltDB, PIDs); (Note: data is deleted at the beginning of every program execution.)
 
 -------------------------------------------------------------------------------
 2. NETWORK & SYSTEM TOPOLOGY
@@ -48,7 +48,7 @@ Data path packet steering:
 Launch the complete cluster and network topology with a single command:
 
     cd ~/raft-sdn/single-raft
-    sudo python3 topo.py
+    sudo python3 raft_runner.py
 
 The script automatically executes the following startup sequence:
   1. Purges lingering processes and cleans the data/ directory.
@@ -59,7 +59,7 @@ The script automatically executes the following startup sequence:
   6. Forms Raft quorum by joining n2 and n3 to seed node n1.
   7. Pre-populates baseline application state (France: Paris, Japan: Tokyo).
   8. Drops directly into the custom interactive cluster prompt: raft-sdn>
-
+Note: if the script fails due to "rm: cannot remove 'data/*: Permission denied", run with sudo: sudo python3 raft_runner.py
 -------------------------------------------------------------------------------
 4. INTERACTIVE CLI COMMAND REFERENCE
 -------------------------------------------------------------------------------

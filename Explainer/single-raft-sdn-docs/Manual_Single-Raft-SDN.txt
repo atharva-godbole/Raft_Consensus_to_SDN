@@ -1,7 +1,7 @@
 ===============================================================================
 RAFT-BASED FAULT-TOLERANT SDN CONTROLLER: OPERATIONAL MANUAL
 ===============================================================================
-
+(Note: If running the software on VM, ssh into the VM for stable performance, instead of using the VM's CLI/GUI.)
 -------------------------------------------------------------------------------
 1. PREREQUISITES & ENVIRONMENT SETUP
 -------------------------------------------------------------------------------

@@ -12,7 +12,7 @@ A fault-tolerant distributed Key-Value store (Country:Capital) integrated with a
 
 ## Interactive CLI
 
-Run `sudo python3 topo.py` to compile the Go binary, launch Mininet, and enter the custom CLI:
+Run `sudo python3 raft_runner.py` to compile the Go binary, launch Mininet, and enter the custom CLI:
 
 * `status [node]` — Inspect cluster health, node roles, and current KV state.
 * `read <Country>` — Query a capital through the VIP (`10.0.0.100`).
